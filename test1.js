@@ -103,53 +103,42 @@ const sessions = [
 ];
 
 function result(sessions) {
-    let result = [];
-
-    sessions.forEach(function (item) {
-        let existing = result.filter(function (data) {
-            return data.session_id == item.session_id;
-        });
-
-        if (existing.length) {
-            let existingIndex = result.indexOf(existing[0]);
-
-            let existingClass = result[existingIndex].classes.filter(function (
-                data
-            ) {
-                return data.class_id == item.class.class_id;
-            });
-
-            if (!existingClass.length) {
-                result[existingIndex].classes.push({
-                    ...item.class,
-                    students: [{ ...item.student }],
-                });
-            } else {
-                let existingClassIndex = result[existingIndex].classes.indexOf(
-                    existingClass[0]
-                );
-
-                let existingStudent = result[existingIndex].classes[
-                    existingClassIndex
-                ].students.filter(function (data) {
-                    return data.student_id == item.student.student_id;
-                });
-
-                if (!existingStudent.length) {
-                    result[existingIndex].classes[
-                        existingClassIndex
-                    ].students.push(item.student);
-                }
-            }
-        } else {
-            result.push({
-                session_id: item.session_id,
-                time: item.time,
-                classes: [{ ...item.class, students: [{ ...item.student }] }],
-            });
+    const newArr = [];
+    sessions.forEach((session) => {
+        let oldSession = newArr.find((e) => e.session_id == session.session_id);
+        if (!oldSession) {
+            oldSession = {
+                session_id: session.session_id,
+                time: session.time,
+                classes: [],
+            };
+            newArr.push(oldSession);
+        }
+        let oldClass = oldSession.classes.find(
+            (e) => e.class_id == session.class.class_id
+        );
+        if (!oldClass) {
+            oldClass = {
+                class_id: session.class.class_id,
+                name: session.class.name,
+                students: [],
+            };
+            oldSession.classes.push(oldClass);
+        }
+        let oldStudent = oldClass.students.find(
+            (e) => e.student_id == session.student.student_id
+        );
+        if (!oldStudent) {
+            oldStudent = {
+                student_id: session.student.student_id,
+                name: session.student.name,
+            };
+            oldClass.students.push(oldStudent);
         }
     });
-    return result;
+    console.log(JSON.stringify(newArr));
+    return newArr;
 }
 
-console.log(result(sessions));
+result(sessions)
+
