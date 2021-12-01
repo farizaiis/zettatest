@@ -24,19 +24,18 @@ const data = [
 ];
 
 function result(data) {
-    return data.map((check) => {
-        return loopThrough(check);
-    });
-}
-
-function loopThrough(data) {
-    if (typeof data === 'object' && data) {
-        Object.keys(data).forEach((e) => {
-            if (typeof data[e] === 'object') loopThrough(data[e]);
-            else if (!data[e]) delete data[e];
+    if (Array.isArray(data)) {
+        return data.map(result);
+    } else if (Object.prototype.toString.call(data) === '[object Object]') {
+        let newObject = {};
+        Object.keys(data).forEach((key) => {
+            let newData = result(data[key]);
+            if (newData != null && typeof newData != 'undefined')
+                newObject[key] = newData;
         });
+        data = newObject;
     }
     return data;
 }
 
-console.log(result(data));
+console.log(JSON.stringify(result(data)));

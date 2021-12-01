@@ -136,9 +136,8 @@ function result(sessions) {
             oldClass.students.push(oldStudent);
         }
     });
-    console.log(JSON.stringify(newArr));
+
     return newArr;
 }
 
-result(sessions)
-
+console.log(JSON.stringify(result(sessions)));
